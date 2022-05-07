@@ -5,7 +5,7 @@ const res = require("express/lib/response");
 const port = process.env.PORT || 5000;
 require("dotenv").config();
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 const app = express();
 
@@ -39,9 +39,30 @@ async function run() {
     //Loading an inventory by id
     app.get("/inventory/:id", async (req, res) => {
       const id = req.params.id;
-      const query = { _id: Object(id) };
+      const query = { _id: ObjectId(id) };
       const inventory = await inventoryCollection.findOne(query);
       res.send(inventory);
+      // console.log(id, query, inventory, inventoryCollection);
+    });
+    //update quantity decrease by one
+    app.put("/inventory/:id", async (req, res) => {
+      const id = req.params.id;
+
+      const updatedInventory = req.body;
+
+      const filter = { _id: ObjectId(id) };
+      const options = { upsert: true };
+      const updatedDoc = {
+        $set: {
+          quantity: updatedInventory.quantity,
+        },
+      };
+      const result = await inventoryCollection.updateOne(
+        filter,
+        updatedDoc,
+        options
+      );
+      res.send(result);
     });
   } finally {
   }
@@ -49,7 +70,7 @@ async function run() {
 run().catch(console.dir);
 
 app.get("/", (req, res) => {
-  res.send("Warehouse Management serverrd");
+  res.send("Warehouse Management serverd");
 });
 
 app.listen(port, () => {
