@@ -24,16 +24,24 @@ async function run() {
   try {
     await client.connect();
     //collection
-    const productCollection = client
+    const inventoryCollection = client
       .db("warehouseInventory")
       .collection("inventory");
 
     //API
     app.get("/inventory", async (req, res) => {
       const query = {};
-      const cursor = productCollection.find(query);
+      const cursor = inventoryCollection.find(query);
       const products = await cursor.toArray();
       res.send(products);
+    });
+
+    //Loading an inventory by id
+    app.get("/inventory/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: Object(id) };
+      const inventory = await inventoryCollection.findOne(query);
+      res.send(inventory);
     });
   } finally {
   }
