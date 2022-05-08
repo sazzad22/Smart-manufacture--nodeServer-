@@ -66,6 +66,16 @@ async function run() {
       );
       res.send(result);
     });
+
+    //delete inventory
+    app.delete('/inventory/:id', async (req, req) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await inventoryCollection.deleteOne(query);
+      res.send(result);
+    })
+
+    //ITEM
     //adding item to db
     app.post('/item', async (req, res) => {
       const newItem = req.body;
