@@ -68,7 +68,7 @@ async function run() {
     });
 
     //delete inventory
-    app.delete('/inventory/:id', async (req, req) => {
+    app.delete('/inventory/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const result = await inventoryCollection.deleteOne(query);
@@ -90,6 +90,13 @@ async function run() {
       const cursor = itemCollection.find(query);
       const item = await cursor.toArray();
       res.send(item);
+    })
+    //delete item
+    app.delete('/item/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await itemCollection.deleteOne(query);
+      res.send(result);
     })
 
 
