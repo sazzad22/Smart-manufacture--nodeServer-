@@ -75,19 +75,20 @@ async function run() {
       res.send(result);
     })
 
-    //ITEM
+    //invetory 
     //adding item to db
-    app.post('/item', async (req, res) => {
+    app.post('/inventory', async (req, res) => {
       const newItem = req.body;
       
-      const result = await itemCollection.insertOne(newItem);
+      const result = await inventoryCollection.insertOne(newItem);
       res.send(result);
     })
-    //loading the items
-    app.get('/item', async (req, res) => {
+    //loading the new added items
+    app.get('/myinventory', async (req, res) => {
       const email = req.query.email;
+      
       const query = { email: email }
-      const cursor = itemCollection.find(query);
+      const cursor = inventoryCollection.find(query);
       const item = await cursor.toArray();
       res.send(item);
     })
