@@ -43,6 +43,7 @@ async function run() {
     const productCollection = client.db("manufacture").collection("products");
     const orderCollection = client.db("manufacture").collection("order");
     const userCollection = client.db("manufacture").collection("user");
+    const reviewCollection = client.db("manufacture").collection("reveiw");
 
     app.get("/product", async (req, res) => {
       const query = {};
@@ -93,6 +94,14 @@ async function run() {
       }
       const orders = await orderCollection.find().toArray();
       res.send(orders)
+    })
+    
+    //* Review
+    //add review
+    app.post('/review',  async (req, res) => {
+      const review = req.body;
+      const result = await reviewCollection.insertOne(review);
+      res.send(result)
     })
 
     
