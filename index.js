@@ -23,6 +23,7 @@ async function run() {
   try {
     await client.connect();
     const productCollection = client.db("manufacture").collection("products");
+    const orderCollection = client.db("manufacture").collection("order");
 
     app.get("/product", async (req, res) => {
       const query = {};
@@ -37,6 +38,14 @@ async function run() {
       const product = await productCollection.findOne(query);
       res.send(product);
     });
+
+    // *Order
+    //adding order
+    
+
+    
+
+
   } finally {
   }
 }
