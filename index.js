@@ -45,6 +45,17 @@ async function run() {
     const userCollection = client.db("manufacture").collection("user");
     const reviewCollection = client.db("manufacture").collection("reveiw");
 
+    const verifyAdmin = async (req, res, next) => {
+      const requester = req.decoded.email;
+      const requesterAccount = await userCollection.findOne({ email: requester });
+      if (requesterAccount.role === 'admin') {
+        next();
+      }
+      else {
+        res.status(403).send({ message: 'forbidden' });
+      }
+    }
+
     app.get("/product", async (req, res) => {
       const query = {};
       const result = await productCollection.find(query).toArray();
@@ -59,7 +70,39 @@ async function run() {
       res.send(product);
     });
 
-    //*genrateing jwt token
+    //*USER
+
+    //Load user
+
+    app.get('/user', verifyJWT, async (req, res) => {
+      const users = await userCollection.find().toArray();
+      res.send(users);
+    });
+
+    //*ADMIN
+    
+    //LOad ADMIN
+    app.get('/admin/:email', verifyJWT, async (req, res) => {
+      const email = req.params.email;
+      const query={email:email}
+      const user = await userCollection.findOne({ email: email });
+      const isAdmin = user.role === 'admin';
+      res.send({admin:isAdmin})
+    })
+
+    // Make Admin
+    app.put('/user/admin/:email', verifyJWT,verifyAdmin, async (req, res) => {
+      const email = req.params.email;
+      const filter = { email: email };
+      const updateDoc = {
+        $set: { role: 'admin' },
+      };
+      const result = await userCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    })
+
+
+    //*genrateing jwt token and add user
     app.put('/user/:email', async (req, res) => {
       const email = req.params.email;
       const user = req.body;
@@ -74,6 +117,7 @@ async function run() {
       res.send({result,token})
 
     })
+
 
     // *Order
     //adding order
@@ -102,6 +146,11 @@ async function run() {
       const review = req.body;
       const result = await reviewCollection.insertOne(review);
       res.send(result)
+    })
+    //load reviews
+    app.get('/review', async (req, res) => {
+      const reviews = await reviewCollection.find().toArray();
+      res.send(reviews);
     })
 
     
