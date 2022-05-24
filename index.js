@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const res = require("express/lib/response");
 require("dotenv").config();
 
 const app = express();
@@ -24,6 +25,7 @@ async function run() {
     await client.connect();
     const productCollection = client.db("manufacture").collection("products");
     const orderCollection = client.db("manufacture").collection("order");
+    const userCollection = client.db("manufacture").collection("user");
 
     app.get("/product", async (req, res) => {
       const query = {};
@@ -39,9 +41,35 @@ async function run() {
       res.send(product);
     });
 
+    //*genrateing jwt token
+    app.put('/user/:email', async (req, res) => {
+      const email = req.params.email;
+      const user = req.body;
+      const filter = { email: email }
+      const options = { upsert: true };
+      const updateDoc = {
+        $set:user,
+      }
+      const result = await userCollection.updateOne(filter, updateDoc, options);
+
+      const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5d' })
+      res.send({result,token})
+
+    })
+
     // *Order
     //adding order
-    
+    app.post('/order', async (req, res) => {
+      const order = req.body;
+      const result = await orderCollection.insertOne(order);
+      res.send(result)
+    })
+
+    //Loading orders
+    app.get('/order', async (req, res) => {
+      const orders = await orderCollection.find().toArray();
+      res.send(orders)
+    })
 
     
 
