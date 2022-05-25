@@ -103,8 +103,27 @@ async function run() {
       res.send(client)
     })
 
-    //*ADMIN
-    
+    //update user
+    app.put("user/:email", verifyJWT, async (req, res) => {
+      const email = req.params.email;
+      const updatedClient = req.body;
+      const filter = { email: email };
+      const options = { upsert: true };
+
+      const updateDoc = {
+        $set: {
+          education:updatedClient.education,
+          location:updatedClient.location,
+          phone:updatedClient.phone,
+          profileLine:updatedClient.location,
+        },
+      }
+      const result = await userCollection.updateOne(filter, updateDoc, options);
+      res.send(result)
+
+    })
+
+    //*ADMIN    
     //LOad ADMIN
     app.get('/admin/:email', verifyJWT, async (req, res) => {
       const email = req.params.email;
