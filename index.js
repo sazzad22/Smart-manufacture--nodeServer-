@@ -95,6 +95,14 @@ async function run() {
       res.send(users);
     });
 
+    //LOad One user
+    app.get('/user/:email', verifyJWT, async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const client = await userCollection.findOne(query);
+      res.send(client)
+    })
+
     //*ADMIN
     
     //LOad ADMIN
@@ -143,6 +151,8 @@ async function run() {
       res.send(result)
     })
 
+    
+
     //Loading orders
     app.get('/order',verifyJWT, async (req, res) => {
       const email = req.query.email;
@@ -154,6 +164,14 @@ async function run() {
       }
       const orders = await orderCollection.find().toArray();
       res.send(orders)
+    })
+
+    // Delete order
+    app.delete('/order/:id', verifyJWT, async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await orderCollection.deleteOne(query)
+      res.send(result)
     })
     
     //* Review
