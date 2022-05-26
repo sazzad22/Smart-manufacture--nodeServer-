@@ -6,6 +6,9 @@ const res = require("express/lib/response");
 const { decode } = require("jsonwebtoken");
 require("dotenv").config();
 
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -44,6 +47,7 @@ async function run() {
     const orderCollection = client.db("manufacture").collection("order");
     const userCollection = client.db("manufacture").collection("user");
     const reviewCollection = client.db("manufacture").collection("reveiw");
+    const paymentCollection = client.db("manufacture").collection("payment");
 
     const verifyAdmin = async (req, res, next) => {
       const requester = req.decoded.email;
@@ -55,6 +59,36 @@ async function run() {
         res.status(403).send({ message: 'forbidden' });
       }
     }
+
+    //* Payment
+    app.post('/create-payment-intent', verifyJWT, async(req, res) =>{
+      const order = req.body;
+      const price = order.price;
+      const amount = price*100;
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount : amount,
+        currency: 'usd',
+        payment_method_types:['card']
+      });
+      res.send({clientSecret: paymentIntent.client_secret})
+    });
+
+    // updating order info and storing payment info
+    app.patch('/order/:id', verifyJWT, async(req, res) =>{
+      const id  = req.params.id;
+      const payment = req.body;
+      const filter = {_id: ObjectId(id)};
+      const updatedDoc = {
+        $set: {
+          paid: true,
+          transactionId: payment.transactionId
+        }
+      }
+
+      const result = await paymentCollection.insertOne(payment);
+      const updatedBooking = await orderCollection.updateOne(filter, updatedDoc);
+      res.send(updatedBooking);
+    })
 
     app.get("/product", async (req, res) => {
       const query = {};
@@ -183,6 +217,14 @@ async function run() {
       }
       const orders = await orderCollection.find().toArray();
       res.send(orders)
+    })
+
+    //Load Order by ID
+    app.get('/order/:id', verifyJWT, async(req, res) =>{
+      const id = req.params.id;
+      const query = {_id: ObjectId(id)};
+      const order = await orderCollection.findOne(query);
+      res.send(order);
     })
 
     // Delete order
