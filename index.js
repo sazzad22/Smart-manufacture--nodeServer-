@@ -73,7 +73,7 @@ async function run() {
       res.send({clientSecret: paymentIntent.client_secret})
     });
 
-    // updating order info and storing payment info
+    // updating order info and storing payment info on db
     app.patch('/order/:id', verifyJWT, async(req, res) =>{
       const id  = req.params.id;
       const payment = req.body;
@@ -90,6 +90,7 @@ async function run() {
       res.send(updatedBooking);
     })
 
+    
     app.get("/product", async (req, res) => {
       const query = {};
       const result = await productCollection.find(query).toArray();
