@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
+<<<<<<< HEAD
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const res = require("express/lib/response");
 const { decode } = require("jsonwebtoken");
@@ -11,18 +12,33 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const app = express();
 const port = process.env.PORT || 5000;
+=======
+const res = require("express/lib/response");
+const port = process.env.PORT || 5000;
+require("dotenv").config();
+
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+
+const app = express();
+>>>>>>> 6082e1449f00b759c3b5dd3a735fefbb8e83d741
 
 //middleware
 app.use(cors());
 app.use(express.json());
 
+<<<<<<< HEAD
 //connect mongoDB
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@manufacturer.lk3jy.mongodb.net/?retryWrites=true&w=majority`;
+=======
+//CONNECTING  to mongodb
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@warehouse.xnn1k.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+>>>>>>> 6082e1449f00b759c3b5dd3a735fefbb8e83d741
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   serverApi: ServerApiVersion.v1,
 });
+<<<<<<< HEAD
 
 //jwt middleware
 function verifyJWT(req, res, next) {
@@ -250,6 +266,87 @@ async function run() {
     })
 
     
+=======
+async function run() {
+  try {
+    await client.connect();
+    //collection
+    const inventoryCollection = client
+      .db("warehouseInventory")
+      .collection("inventory");
+      const itemCollection = client.db('warehouseInventory').collection('item');
+    
+
+    //API
+    app.get("/inventory", async (req, res) => {
+      const query = {};
+      const cursor = inventoryCollection.find(query);
+      const products = await cursor.toArray();
+      res.send(products);
+    });
+
+    //Loading an inventory by id
+    app.get("/inventory/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const inventory = await inventoryCollection.findOne(query);
+      res.send(inventory);
+      // console.log(id, query, inventory, inventoryCollection);
+    });
+    //update quantity decrease by one or many ...
+    app.put("/inventory/:id", async (req, res) => {
+      const id = req.params.id;
+
+      const updatedInventory = req.body;
+
+      const filter = { _id: ObjectId(id) };
+      const options = { upsert: true };
+      const updatedDoc = {
+        $set: {
+          quantity: updatedInventory.quantity,
+        },
+      };
+      const result = await inventoryCollection.updateOne(
+        filter,
+        updatedDoc,
+        options
+      );
+      res.send(result);
+    });
+
+    //delete inventory
+    app.delete('/inventory/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await inventoryCollection.deleteOne(query);
+      res.send(result);
+    })
+
+    //invetory 
+    //adding item to db
+    app.post('/inventory', async (req, res) => {
+      const newItem = req.body;
+      
+      const result = await inventoryCollection.insertOne(newItem);
+      res.send(result);
+    })
+    //loading the new added items
+    app.get('/myinventory', async (req, res) => {
+      const email = req.query.email;
+      
+      const query = { email: email }
+      const cursor = inventoryCollection.find(query);
+      const item = await cursor.toArray();
+      res.send(item);
+    })
+    //delete item
+    app.delete('/item/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await itemCollection.deleteOne(query);
+      res.send(result);
+    })
+>>>>>>> 6082e1449f00b759c3b5dd3a735fefbb8e83d741
 
 
   } finally {
@@ -258,9 +355,17 @@ async function run() {
 run().catch(console.dir);
 
 app.get("/", (req, res) => {
+<<<<<<< HEAD
   res.send("Hello From the smart manufacturer");
 });
 
 app.listen(port, () => {
   console.log(`Manufacturer listening on port ${port}`);
+=======
+  res.send("Warehouse Management serverd");
+});
+
+app.listen(port, () => {
+  console.log("Warehouse Management Server- ", port);
+>>>>>>> 6082e1449f00b759c3b5dd3a735fefbb8e83d741
 });
