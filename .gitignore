@@ -1,7 +1,4 @@
 node_modules
-<<<<<<< HEAD
-.env
-=======
 .env
 inventory.json
->>>>>>> 6082e1449f00b759c3b5dd3a735fefbb8e83d741
+ 

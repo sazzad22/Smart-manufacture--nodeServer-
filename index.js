@@ -8,11 +8,18 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const app = express();
 
-const res = require("express/lib/response");
+
 const port = process.env.PORT || 5000;
 require("dotenv").config();
 
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const dbConnect = require("./utils/dbConnect");
+const routerProduct = require("./routes/v1/products.route");
+const routerProduct2 = require("./routes/v2/products2.route");
+const routerOrder = require("./routes/v2/order.route");
+const viewCount = require("./middleware/viewCount");
+const errorHandler = require("./middleware/errorHandler");
+const { connectToServer } = require("./utils/dbConnect");
 
 
 
@@ -21,18 +28,24 @@ const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 app.use(cors());
 app.use(express.json());
 
+// app.use(viewCount);
 
-//connect mongoDB
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@manufacturer.lk3jy.mongodb.net/?retryWrites=true&w=majority`;
+//*connect mongoDB
+connectToServer((err) => {
+  if (!err) {
+    app.listen(port, () => {
+      console.log(`Manufacturer listening on port ${port}`);
+    
+    });
+  } else {
+    console.log(err);
+  }
+})
 
-//CONNECTING  to mongodb
-// const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@warehouse.xnn1k.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
-
-const client = new MongoClient(uri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  serverApi: ServerApiVersion.v1,
-});
+//app using the routes
+app.use('/api/v1/product', routerProduct);
+app.use('/api/v2/product', routerProduct2);
+app.use('/api/v2/order', routerOrder);
 
 
 //jwt middleware
@@ -49,16 +62,19 @@ function verifyJWT(req, res, next) {
     req.decoded = decoded;
     next();
   });
-}
+};
+
+
+
 
 async function run() {
   try {
-    await client.connect();
-    const productCollection = client.db("manufacture").collection("products");
-    const orderCollection = client.db("manufacture").collection("order");
-    const userCollection = client.db("manufacture").collection("user");
-    const reviewCollection = client.db("manufacture").collection("reveiw");
-    const paymentCollection = client.db("manufacture").collection("payment");
+    // await client.connect();
+    // const productCollection = client.db("manufacture").collection("products");
+    // const orderCollection = client.db("manufacture").collection("order");
+    // const userCollection = client.db("manufacture").collection("user");
+    // const reviewCollection = client.db("manufacture").collection("reveiw");
+    // const paymentCollection = client.db("manufacture").collection("payment");
 
     const verifyAdmin = async (req, res, next) => {
       const requester = req.decoded.email;
@@ -101,7 +117,8 @@ async function run() {
       res.send(updatedBooking);
     })
 
-    
+    // * Product
+
     app.get("/product", async (req, res) => {
       const query = {};
       const result = await productCollection.find(query).toArray();
@@ -264,15 +281,27 @@ async function run() {
     
   }
 }
-run().catch(console.dir);
+// run().catch(console.dir)
 
     app.get("/", (req, res) => {
 
       res.send("Hello From the smart manufacturer");
     });
 
-app.listen(port, () => {
-  console.log(`Manufacturer listening on port ${port}`);
 
+app.all("*", (req, res) => {
+  res.send('NO Routes Found.');
+});
+
+//Error Handler - express default - next prameter makes program to call the next middleware which is the line below, an error handler.It catch all the error from all route controllers.
+app.use(errorHandler);
+
+
+//Global Error handler - if error, app closes
+process.on("unhandledRejection", (error) => {
+  console.log(error.name, error.message);
+  app.close(() => {
+    process.exit(1);
+  });
 });
   
