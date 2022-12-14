@@ -17,6 +17,7 @@ const dbConnect = require("./utils/dbConnect");
 const routerProduct = require("./routes/v1/products.route");
 const routerProduct2 = require("./routes/v2/products2.route");
 const routerOrder = require("./routes/v2/order.route");
+const routerUser = require("./routes/v2/user.route");
 const viewCount = require("./middleware/viewCount");
 const errorHandler = require("./middleware/errorHandler");
 const { connectToServer } = require("./utils/dbConnect");
@@ -46,6 +47,7 @@ connectToServer((err) => {
 app.use('/api/v1/product', routerProduct);
 app.use('/api/v2/product', routerProduct2);
 app.use('/api/v2/order', routerOrder);
+app.use('/api/v2/user', routerUser);
 
 
 //jwt middleware
