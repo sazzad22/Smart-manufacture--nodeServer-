@@ -19,6 +19,7 @@ const routerProduct2 = require("./routes/v2/products2.route");
 const routerOrder = require("./routes/v2/order.route");
 const routerUser = require("./routes/v2/user.route");
 const routerReview = require("./routes/v2/review.route");
+const routerProject = require("./routes/v2/project.route");
 const viewCount = require("./middleware/viewCount");
 const errorHandler = require("./middleware/errorHandler");
 const { connectToServer } = require("./utils/dbConnect");
@@ -50,6 +51,7 @@ app.use('/api/v2/product', routerProduct2);
 app.use('/api/v2/order', routerOrder);
 app.use('/api/v2/user', routerUser);
 app.use('/api/v2/review', routerReview);
+app.use('/api/v2/project', routerProject);
 
 
 //jwt middleware

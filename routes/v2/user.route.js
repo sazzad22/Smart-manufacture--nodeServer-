@@ -17,4 +17,8 @@ router
     .route('/admin/:email')
     .put(userController.updateRoleToAdmin);
 
+router
+    .route('/check/admin/:email')
+    .get(userController.loadUserAndCheckIfAdmin);
+
 module.exports = router;
