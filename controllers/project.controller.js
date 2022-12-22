@@ -27,7 +27,20 @@ const getOneProject = async (req, res, next) => {
   }
 };
 
+const addOneProject = async (req, res, next) => {
+  try {
+    const db = getDb();
+    const projectCollection = db.collection("project");
+    const project = req.body;
+    const result = await projectCollection.insertOne(project);
+    res.send(result);
+  } catch (error) {
+    next(error)
+  }
+}
+
 module.exports = {
     getProjects,
-    getOneProject
+  getOneProject,
+  addOneProject
 }

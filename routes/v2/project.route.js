@@ -5,7 +5,8 @@ const router = express.Router();
 
 router
     .route("/")
-    .get(projectController.getProjects);
+    .get(projectController.getProjects)
+    .post(projectController.addOneProject)
 
 router
     .route("/:id")

@@ -1,0 +1,40 @@
+[
+    {
+        "name": "Smart Manufacturer",
+        "url": "https://smart-manufacture.web.app/",
+        "smDescription": "for computer manufacturers to collect electronic parts in different quantity",
+        "Description": "Built responsive single page application with multiple routes ( part details,order page, manage orders ,user profile etc) and admin features and authorization .Implemented buy parts, Authentication with Login signUp using firebase and security using JWT also payment gateway using stripe.Created Administrative routes for the site admin to manage website.Created RESTful api to process and manage business data on MongoDb",
+        "clientCode":"https://github.com/sazzad22/Smart-manufacture-clientSite-",
+        "serverCode":"https://github.com/sazzad22/Smart-manufacture--nodeServer-",
+        "img":"https://i.ibb.co/N74KFNs/smart-manufacturer.jpg",
+        "img2":"https://i.ibb.co/0D8hsxt/smart-3.jpg",
+        "img3":"https://i.ibb.co/HzWgmnj/smart-2.jpg",
+        "technology":"React,Node.js, express, mongoDb, Firebase, tailwind css, html"
+      },
+    {
+        "name": "Inventory Management",
+        "url": "https://warehouse-management-398a5.web.app/",
+        "smDescription": "providing inventory and management services",
+        "Description": "Visualized inventories and management services and implemented features for updating products and quantity. Users can signUp, log into the website and manage their own orders and inventory items.Created APIs to create, read, update, delete or manage inventory data of database from the UI",
+        "clientCode":"https://github.com/sazzad22/Inventory-Management",
+        "serverCode":"https://github.com/sazzad22/Inventory-management-server",
+        "img":"https://i.ibb.co/JHvGx5M/warehouse-Management.jpg",
+        "img2":"https://i.ibb.co/BB6pj6J/inv-2.jpg",
+        "img3":"https://i.ibb.co/JHvGx5M/warehouse-Management.jpg",
+        "technology":"React,Node.js, express, mongoDb, Firebase, tailwind css, html"
+      },
+    {
+        "name": "The Lens Guru",
+        "url": "https://smart-manufacture.web.app/",
+        "smDescription": "for a professional  photographer providing professional services",
+        "Description": "Developed a website for a photographer, providing professional services.         Responsive UI design using Bootstrap CSS. Visitors can log in, sign up which is implemented using firebase also check out the product details, and buy his services.",
+        "clientCode":"https://github.com/sazzad22/Independent-service-provider",
+        "serverCode":"",
+        "img":"https://i.ibb.co/GWw6K1Z/LensGuru.jpg",
+        "img2":"https://i.ibb.co/cNTBwss/lens-3.jpg",
+        "img3":"https://i.ibb.co/PCFbv7F/lens-2.jpg",
+        "technology":"React, Firebase,Bootstrap css, html"
+      }
+    
+    
+]
